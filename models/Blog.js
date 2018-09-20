@@ -1,11 +1,8 @@
 const mongoose = require('mongoose')
-
-require('dotenv').config()
-
-const url = process.env.MONGODB_URI
+const Config = require('../utils/Config')
 
 
-mongoose.connect(url, (err) => { if(err) { process.exit() } } )
+mongoose.connect(Config.mongoURl, (err) => { if(err) { process.exit() } } )
 
 class BlogClass
 {
@@ -23,6 +20,12 @@ const BlogSchema = new mongoose.Schema({
 })
 
 BlogSchema.loadClass(BlogClass)
+
+/*BlogSchema.statics.format = function(a) =>
+{
+  return {'title':a.title,'author':a.author,'url':a.url,'likes':a.likes,'id':a._id}
+}*/
+
 const Blog = mongoose.model('Blog', BlogSchema)
 
 module.exports = Blog
