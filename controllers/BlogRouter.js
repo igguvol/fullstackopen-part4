@@ -1,6 +1,7 @@
 const BlogRouter = require('express').Router()
 const Blog = require('../models/Blog')
 
+const listHelper = require('../utils/list_Helper')
 
 BlogRouter.get('/', (request, response) => {
   console.log('BlogRouter.get');
@@ -10,12 +11,13 @@ BlogRouter.get('/', (request, response) => {
       response.json(blogs.map(a => a.format))
     })
     .catch( (e) => {
-      response.status(500).json( {'error':e} );
+      response.status(400).json( {'error':e} );
     })
 })
 
 BlogRouter.post('/', (request, response) => {
   console.log('BlogRouter.post');
+  //console.log('blogsInDb:',listHelper.blogsInDb);
   if ( !request.body.title )
     response.status(400).json({"error":"missing title"});
   if ( !request.body.url )
@@ -27,9 +29,25 @@ BlogRouter.post('/', (request, response) => {
       response.status(201).json(result.format)
     })
     .catch( (e) => {
-      response.status(500).json( {'error':e} );
+      response.status(400).json( {'error':e} );
     })
 })
+
+BlogRouter.delete('/:id', (request, response) => {
+  console.log('BlogRouter.delete ', request.params.id);
+  const blog = new Blog(request.body)
+  Blog.findById( request.params.id )
+    .then(result => {
+      if ( result )
+        response.json(result.format)
+      else
+        response.status(404).end();
+    })
+    .catch( (e) => {
+      response.status(400).json( {'error':e} );
+    })
+})
+
 
 
 module.exports = BlogRouter;
