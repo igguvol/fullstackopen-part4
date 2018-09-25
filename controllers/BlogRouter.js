@@ -35,18 +35,20 @@ BlogRouter.post('/', (request, response) => {
 
 BlogRouter.delete('/:id', (request, response) => {
   console.log('BlogRouter.delete ', request.params.id);
-  const blog = new Blog(request.body)
-  Blog.findById( request.params.id )
-    .then(result => {
-      if ( result )
-        response.json(result.format)
-      else
-        response.status(404).end();
-    })
-    .catch( (e) => {
-      response.status(400).json( {'error':e} );
-    })
-})
+  try
+  {
+    const blog = await Blog.findById( request.params.id )
+
+    if ( blog )
+      response.json(blog.format)
+    else
+      response.status(404).end();
+  }
+  catch (e)
+  {
+    response.status(400).json( {'error':e} );
+  }
+}
 
 
 
