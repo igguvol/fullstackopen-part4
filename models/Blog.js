@@ -14,9 +14,9 @@ class BlogClass
 
 const BlogSchema = new mongoose.Schema({
   title: String,
-  author: String,
+  author: { type: String, default: '' },
   url: String,
-  likes: Number
+  likes: { type: Number, default: 0 }
 })
 
 BlogSchema.loadClass(BlogClass)
