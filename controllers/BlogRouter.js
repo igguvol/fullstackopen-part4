@@ -37,8 +37,19 @@ BlogRouter.delete('/:id', (request, response) => {
   console.log('BlogRouter.delete ', request.params.id);
   try
   {
-    const blog = await Blog.findById( request.params.id )
+    await Blog.findByIdAndRemove( request.params.id )
+  }
+  catch (e)
+  {
+    response.status(400).json( {'error':e} );
+  }
+})
 
+BlogRouter.get('/:id', (request, response) => {
+  console.log('BlogRouter.delete ', request.params.id);
+  try
+  {
+    const blog = await Blog.findById( request.params.id )
     if ( blog )
       response.json(blog.format)
     else
@@ -48,8 +59,7 @@ BlogRouter.delete('/:id', (request, response) => {
   {
     response.status(400).json( {'error':e} );
   }
-}
-
+})
 
 
 module.exports = BlogRouter;
