@@ -9,6 +9,9 @@
     "test": "cross-env NODE_ENV=test jest --verbose",
     "lint": "eslint ."
   },
+  "jest": {
+    "testEnvironment": "node"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/igguvol/fullstackopen-part4.git"
@@ -27,7 +30,9 @@
     "morgan": "^1.9.1"
   },
   "devDependencies": {
+    "babel-eslint": "^9.0.0",
     "cross-env": "^5.2.0",
-    "jest": "^23.6.0"
+    "jest": "^23.6.0",
+    "supertest": "^3.3.0"
   }
 }

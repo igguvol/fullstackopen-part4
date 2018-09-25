@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Config = require('../utils/Config')
 
 
-mongoose.connect(Config.mongoURl, (err) => { if(err) { process.exit() } } )
+//mongoose.connect(Config.mongoURl, (err) => { if(err) { process.exit() } } )
 
 class BlogClass
 {

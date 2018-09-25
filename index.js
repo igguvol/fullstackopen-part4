@@ -1,6 +1,7 @@
-
+const http = require('http')
 const express = require('express')
 const app = express()
+const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
@@ -22,10 +23,28 @@ app.use( morgan(function (tokens, req, res) {
 })
 )
 
+mongoose
+  .connect(Config.mongoURl)
+  .then( () => {
+    console.log('connected to database', Config.mongoURl)
+  })
+  .catch( err => {
+    console.log(err)
+  })
 
 
 app.use('/api/blogs',BlogRouter)
 
-app.listen(Config.port, () => {
+const server = http.createServer(app)
+
+server.listen(Config.port, () => {
   console.log(`Server running on port ${Config.port}`)
 })
+
+server.on('close', () => {
+  mongoose.connection.close()
+})
+
+module.exports = {
+  app, server, mongoose
+}
