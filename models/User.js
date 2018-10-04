@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const Config = require('../utils/Config')
-const bcrypt = require('bcryptjs')
 
 class UserClass
 {
@@ -13,8 +12,9 @@ class UserClass
 const UserSchema = new mongoose.Schema({
   username: String,
   name: { type: String, default: '' },
+  passwordHash: String,
   adult: Boolean,
-  password: { type: String }
+  notes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }]
 })
 
 UserSchema.loadClass(UserClass)
