@@ -7,6 +7,7 @@ const cors = require('cors')
 const morgan = require('morgan')
 const Config = require('./utils/Config')
 const BlogRouter = require('./controllers/BlogRouter')
+const UserRouter = require('./controllers/UserRouter')
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -34,6 +35,7 @@ mongoose
 
 
 app.use('/api/blogs',BlogRouter)
+app.use('/api/users',UserRouter)
 
 const server = http.createServer(app)
 
