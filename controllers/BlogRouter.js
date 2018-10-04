@@ -17,7 +17,6 @@ BlogRouter.get('/', (request, response) => {
 
 BlogRouter.post('/', (request, response) => {
   console.log('BlogRouter.post');
-  //console.log('blogsInDb:',listHelper.blogsInDb);
   if ( !request.body.title )
     response.status(400).json({"error":"missing title"});
   if ( !request.body.url )
@@ -48,16 +47,6 @@ BlogRouter.post('/:id', async (request, response) => {
   {
     response.status(400).json( {'error':e} );
   }
-  
-  const blog = new Blog(request.body)
-  blog
-    .save()
-    .then(result => {
-      response.status(201).json(result.format)
-    })
-    .catch( (e) => {
-      response.status(400).json( {'error':e} );
-    })
 })
 
 // delete blog by id
