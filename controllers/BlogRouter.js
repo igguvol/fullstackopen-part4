@@ -33,7 +33,35 @@ BlogRouter.post('/', (request, response) => {
     })
 })
 
-BlogRouter.delete('/:id', (request, response) => {
+// update entry
+BlogRouter.post('/:id', async (request, response) => {
+  console.log('BlogRouter.post update');
+  try 
+  {
+    const blog = await Blog.findById( request.param.id )
+    if ( request.body.likes )
+      blog.likes = request.body.likes;
+    await blog.save();
+    response.status(200).json( blog.format );
+  }
+  catch ( exception )
+  {
+    response.status(400).json( {'error':e} );
+  }
+  
+  const blog = new Blog(request.body)
+  blog
+    .save()
+    .then(result => {
+      response.status(201).json(result.format)
+    })
+    .catch( (e) => {
+      response.status(400).json( {'error':e} );
+    })
+})
+
+// delete blog by id
+BlogRouter.delete('/:id', async (request, response) => {
   console.log('BlogRouter.delete ', request.params.id);
   try
   {
@@ -45,7 +73,8 @@ BlogRouter.delete('/:id', (request, response) => {
   }
 })
 
-BlogRouter.get('/:id', (request, response) => {
+// get single blog by id
+BlogRouter.get('/:id', async (request, response) => {
   console.log('BlogRouter.delete ', request.params.id);
   try
   {
