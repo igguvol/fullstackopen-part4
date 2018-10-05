@@ -16,13 +16,13 @@ const UserSchema = new mongoose.Schema({
   adult: Boolean,
   notes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }]
 })
+/*UserSchema.statics.format = (user) =>
+{
+  return {'username':user.username,'name':user.name,'adult':user.adult,'id':user._id}
+}*/
+
 
 UserSchema.loadClass(UserClass)
-
-/*UserSchema.statics.format = function(a) =>
-{
-  return {'username':this.username,'name':this.name,'adult':this.adult,'id':this._id}
-}*/
 
 const User = mongoose.model('User', UserSchema)
 

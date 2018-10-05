@@ -1,32 +1,34 @@
 const UserRouter = require('express').Router()
 const User = require('../models/User')
+const bcrypt = require('bcryptjs')
 
 const listHelper = require('../utils/list_Helper')
 
 
-UserRouter.post('/', (request, response) => {
-  console.log('UserRouter.post');
+UserRouter.post('/', async (request, response) => {
+  console.log('UserRouter.post: ', request.body);
   if ( !request.body.name )
-    response.status(400).json({"error":"missing name"});
+    return response.status(400).json({"error":"missing name"}).end();
   if ( !request.body.username )
-    response.status(400).json({"error":"missing username"});
+    return response.status(400).json({"error":"missing username"});
   if ( !request.body.password )
-    response.status(400).json({"error":"missing password"});
+    return response.status(400).json({"error":"missing password"});
     
-  const saltRounds = 10
+  const saltRounds = 10;
+  const passwordHash = await bcrypt.hash(request.body.password, saltRounds);
   const user = new User({
     username: request.body.username,
     name: request.body.name,
-    passwordHash = await bcrypt.hash(request.body.password, saltRounds)
+    passwordHash: passwordHash
   });
-  user
-    .save()
-    .then(result => {
-      response.status(201).json(result.format)
-    })
-    .catch( (e) => {
-      response.status(400).json( {'error':e} );
-    })
+  const storedUser = await user.save()
+
+  //TODO: 201? 400?
+  if ( !storedUser )
+    return response.status(400).json();
+  else
+    return response.status(201).json(storedUser.format)
+
 })
 
 // update entry

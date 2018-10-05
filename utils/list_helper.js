@@ -10,11 +10,6 @@ const totalLikes = (blogs) => {
 
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
-    .catch( (e) => {
-      console.log('blogsInDb error: ', e);
-      return e;
-    })
-  //console.log('------------------------------ ',blogs);
   return blogs.map( (a) => a.format )
 }
 
