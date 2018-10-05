@@ -8,6 +8,8 @@ const morgan = require('morgan')
 const Config = require('./utils/Config')
 const BlogRouter = require('./controllers/BlogRouter')
 const UserRouter = require('./controllers/UserRouter')
+const LoginRouter = require('./controllers/Login')
+const middleware = require('./utils/middleware')
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -24,6 +26,12 @@ app.use( morgan(function (tokens, req, res) {
 })
 )
 
+app.use(middleware.tokenExtractor);
+app.use('/api/blogs',BlogRouter);
+app.use('/api/users',UserRouter);
+app.use('/api/login',LoginRouter);
+
+
 mongoose
   .connect(Config.mongoURl)
   .then( () => {
@@ -33,9 +41,6 @@ mongoose
     console.log(err)
   })
 
-
-app.use('/api/blogs',BlogRouter)
-app.use('/api/users',UserRouter)
 
 const server = http.createServer(app)
 

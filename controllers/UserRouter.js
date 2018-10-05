@@ -1,10 +1,11 @@
 const UserRouter = require('express').Router()
 const User = require('../models/User')
 const bcrypt = require('bcryptjs')
+const middleware = require('../utils/middleware')
 
 const listHelper = require('../utils/list_Helper')
 
-
+// adds user 
 UserRouter.post('/', async (request, response) => {
   console.log('UserRouter.post: ', request.body);
   if ( !request.body.name )
@@ -31,25 +32,29 @@ UserRouter.post('/', async (request, response) => {
 
 })
 
-// update entry
+// update entry - todo: remove or restrict to token owner/admin
 UserRouter.post('/:id', async (request, response) => {
-  console.log('UserRouter.post update');
+  console.log('UserRouter.post update. ', request.params.id);
   try 
   {
-    const user = await User.findById( request.param.id )
+    if ( !request.token )
+      return response.status(404).json( {'error':'missing or invalid access token'} ); 
+    const user = await User.findById( request.params.id )
+    if ( !user )
+      return response.status(404).json( {'error':'user not found'} );
     const saltRounds = 10
     if ( request.body.username )
       user.username = request.body.username;
     if ( request.body.name )
       user.name = request.body.name;
     if ( request.body.password )
-      user.username = await bcrypt.hash(request.body.password, saltRounds)
-    await user.save();
-    response.status(200).json( user.format );
+      user.password = await bcrypt.hash(request.body.password, saltRounds)
+    const storedUser = await user.save();
+    response.status(200).json( storedUser.format );
   }
   catch ( exception )
   {
-    response.status(400).json( {'error':e} );
+    response.status(400).json( {'error':exception} );
   }
  
 })
@@ -59,6 +64,8 @@ UserRouter.delete('/:id', async (request, response) => {
   console.log('UserRouter.delete ', request.params.id);
   try
   {
+    if ( !request.token )
+      return response.status(404).json( {'error':'missing or invalid access token'} ); 
     await User.findByIdAndRemove( request.params.id )
   }
   catch (e)
@@ -69,9 +76,11 @@ UserRouter.delete('/:id', async (request, response) => {
 
 // get single User by id
 UserRouter.get('/:id', async (request, response) => {
-  console.log('UserRouter.delete ', request.params.id);
+  console.log('UserRouter.get ', request.params.id);
   try
   {
+    if ( !request.token )
+      return response.status(404).json( {'error':'missing or invalid access token'} ); 
     const user = await User.findById( request.params.id )
     if ( user )
       response.json(user.format)
