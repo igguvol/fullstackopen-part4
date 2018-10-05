@@ -13,13 +13,14 @@ const UserSchema = new mongoose.Schema({
   username: String,
   name: { type: String, default: '' },
   passwordHash: String,
-  adult: Boolean,
-  notes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }]
+  adult: { type: Boolean, default: false },
+  blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Blog' }]
 })
-/*UserSchema.statics.format = (user) =>
+
+UserSchema.statics.format = (user) =>
 {
   return {'username':user.username,'name':user.name,'adult':user.adult,'id':user._id}
-}*/
+}
 
 
 UserSchema.loadClass(UserClass)
