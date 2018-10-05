@@ -37,7 +37,7 @@ UserRouter.post('/:id', async (request, response) => {
   console.log('UserRouter.post update. ', request.params.id);
   try 
   {
-    if ( !request.token )
+    if ( !request.token || !request.token.id )
       return response.status(404).json( {'error':'missing or invalid access token'} ); 
     const user = await User.findById( request.params.id )
     if ( !user )
@@ -64,7 +64,7 @@ UserRouter.delete('/:id', async (request, response) => {
   console.log('UserRouter.delete ', request.params.id);
   try
   {
-    if ( !request.token )
+    if ( !request.token || !request.token.id )
       return response.status(404).json( {'error':'missing or invalid access token'} ); 
     await User.findByIdAndRemove( request.params.id )
   }
@@ -79,7 +79,7 @@ UserRouter.get('/:id', async (request, response) => {
   console.log('UserRouter.get ', request.params.id);
   try
   {
-    if ( !request.token )
+    if ( !request.token || !request.token.id )
       return response.status(404).json( {'error':'missing or invalid access token'} ); 
     const user = await User.findById( request.params.id )
     if ( user )
