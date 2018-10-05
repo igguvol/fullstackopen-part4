@@ -24,9 +24,8 @@ UserRouter.post('/', async (request, response) => {
   });
   const storedUser = await user.save()
 
-  //TODO: 201? 400?
   if ( !storedUser )
-    return response.status(400).json();
+    return response.status(500).json();
   else
     return response.status(201).json(storedUser.format)
 
@@ -38,7 +37,7 @@ UserRouter.post('/:id', async (request, response) => {
   try 
   {
     if ( !request.token || !request.token.id )
-      return response.status(404).json( {'error':'missing or invalid access token'} ); 
+      return response.status(401).json( {'error':'missing or invalid access token'} ); 
     const user = await User.findById( request.params.id )
     if ( !user )
       return response.status(404).json( {'error':'user not found'} );
@@ -65,7 +64,7 @@ UserRouter.delete('/:id', async (request, response) => {
   try
   {
     if ( !request.token || !request.token.id )
-      return response.status(404).json( {'error':'missing or invalid access token'} ); 
+      return response.status(401).json( {'error':'missing or invalid access token'} ); 
     await User.findByIdAndRemove( request.params.id )
   }
   catch (e)
@@ -80,8 +79,8 @@ UserRouter.get('/:id', async (request, response) => {
   try
   {
     if ( !request.token || !request.token.id )
-      return response.status(404).json( {'error':'missing or invalid access token'} ); 
-    const user = await User.findById( request.params.id )
+      return response.status(401).json( {'error':'missing or invalid access token'} ); 
+    const user = await User.findById( request.params.id ).populate('blogs', {likes:1,author:1,title:1,url:1})
     if ( user )
       response.json(user.format)
     else

@@ -1,35 +1,57 @@
 const BlogRouter = require('express').Router()
 const Blog = require('../models/Blog')
+const User = require('../models/User')
 
 const listHelper = require('../utils/list_Helper')
 
-BlogRouter.get('/', (request, response) => {
-  console.log('BlogRouter.get');
-  Blog
-    .find({})
-    .then(blogs => {
-      response.json(blogs.map(a => a.format))
-    })
-    .catch( (e) => {
-      response.status(400).json( {'error':e} );
-    })
+BlogRouter.get('/', async (request, response) => {
+  console.log('BlogRouter.get /');
+  try
+  {
+    const blog = await Blog.find({}).populate('User', {username:1,name:1});
+    console.log('blogs:',blog);
+    if ( blog )
+      return response.status(202).json(blog.map(a => a.format))
+    else
+      response.status(404).json( {'error':'blog not found'} );
+  }
+  catch (e) {
+    response.status(400).json( {'error':e} );
+  }
 })
 
 BlogRouter.post('/', async (request, response) => {
   console.log('BlogRouter.post ', request.token, request.token.id);
-  if ( !request.token || !request.token.id )
-    return response.status(404).json( {'error':'missing or invalid access token'} ); 
-  const body = request.body;
-  if ( !body.title )
-    return response.status(400).json({"error":"missing title"});
-  if ( !body.url )
-    return response.status(400).json({"error":"missing url"});
-  const blog = new Blog( {title:body.title, url:body.url, author:body.author, user:request.token.id} );
-  const savedBlog = blog.save();
-  if ( savedBlog )
-    return response.status(201).json( savedBlog.format );
-  else
+  try
+  {
+    if ( !request.token || !request.token.id )
+      return response.status(401).json( {'error':'missing or invalid access token'} ); 
+    const body = request.body;
+    if ( !body.title )
+      return response.status(400).json({"error":"missing title"});
+    if ( !body.url )
+      return response.status(400).json({"error":"missing url"});
+      
+    const blog = new Blog( {title:body.title, url:body.url, author:body.author, user:request.token.id} );
+    const savedBlog = await blog.save();
+    if ( savedBlog )
+    {
+      // update user, add blog to user.blogs[]
+      let user = await User.findById( request.token.id );
+      if ( !user )
+        return response.status(500).json( {'error':'no user'} );
+      user.blogs.push( savedBlog.id );
+      user.save();
+
+      return response.status(201).json( savedBlog.format );
+    }
+    else
+      return response.status(400).json( {'error':e} );
+  }
+  catch (e) {
     return response.status(400).json( {'error':e} );
+  }
+  
 })
 
 // update entry
@@ -54,6 +76,13 @@ BlogRouter.delete('/:id', async (request, response) => {
   console.log('BlogRouter.delete ', request.params.id);
   try
   {
+    if ( !request.token || !request.token.id )
+      return response.status(401).json( {'error':'missing or invalid access token'} ); 
+
+    const blog = await Blog.findById( request.params.id );
+    if ( blog.user.toString() !== request.token.id.toString() )
+      return response.status(401).json( {'error':'unauthorized'} ); 
+
     await Blog.findByIdAndRemove( request.params.id )
   }
   catch (e)
@@ -64,10 +93,10 @@ BlogRouter.delete('/:id', async (request, response) => {
 
 // get single blog by id
 BlogRouter.get('/:id', async (request, response) => {
-  console.log('BlogRouter.get ', request.params.id);
+  console.log('BlogRouter.get /id ', request.params.id);
   try
   {
-    const blog = await Blog.findById( request.params.id ).populate('User')
+    const blog = await Blog.findById( request.params.id ).populate('User', {username:1,name:1})
     if ( blog )
       response.json(blog.format)
     else
