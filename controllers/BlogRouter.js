@@ -34,7 +34,7 @@ BlogRouter.post('/:id', async (request, response) => {
   console.log('BlogRouter.post update');
   try 
   {
-    const blog = await Blog.findById( request.param.id )
+    const blog = await Blog.findById( request.params.id )
     if ( request.body.likes )
       blog.likes = request.body.likes;
     await blog.save();
