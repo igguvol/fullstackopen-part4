@@ -24,7 +24,7 @@ BlogSchema.loadClass(BlogClass)
 
 BlogSchema.statics.format = (a) =>
 {
-  return {'title':a.title,'author':a.author,'url':a.url,'likes':a.likes,'id':a._id}
+  return {'title':a.title,'author':a.author,'url':a.url,'likes':a.likes,'user':a.user,'id':a._id}
 }
 
 const Blog = mongoose.model('Blog', BlogSchema)

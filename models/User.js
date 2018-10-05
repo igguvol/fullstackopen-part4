@@ -5,7 +5,7 @@ class UserClass
 {
   get format()
   {
-    return {'username':this.username,'name':this.name,'adult':this.adult,'id':this._id}
+    return {'username':this.username,'name':this.name,'adult':this.adult,'blogs:':this.blogs,'id':this._id}
   }
 }
 
@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.statics.format = (user) =>
 {
-  return {'username':user.username,'name':user.name,'adult':user.adult,'id':user._id}
+  return {'username':user.username,'name':user.name,'adult':user.adult,'blogs:':user.blogs,'id':user._id}
 }
 
 
