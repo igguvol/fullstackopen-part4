@@ -9,17 +9,36 @@ const listHelper = require('../utils/list_Helper')
 UserRouter.post('/', async (request, response) => {
   console.log('UserRouter.post: ', request.body);
   if ( !request.body.name )
+  {
+    console.log("no name")
     return response.status(400).json({"error":"missing name"}).end();
+  }
   if ( !request.body.username )
+  {
+    console.log("no username")
     return response.status(400).json({"error":"missing username"});
+  }
   if ( !request.body.password )
+  {
+    console.log("no password")
     return response.status(400).json({"error":"missing password"});
+  }
+  if ( request.body.password.length < 3  )
+  {
+    console.log("too short password")
+    return response.status(400).json({"error":"too short password"}).end();
+  }
+  const existingUser = await User.findOne({ username: request.body.username })
+  if ( existingUser )
+    return response.status(400).json({"error":"username already in use"});
+
     
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(request.body.password, saltRounds);
   const user = new User({
     username: request.body.username,
     name: request.body.name,
+    adult: request.body.adult?request.body.adult:false,
     passwordHash: passwordHash
   });
   const storedUser = await user.save()
