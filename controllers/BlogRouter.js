@@ -10,7 +10,7 @@ BlogRouter.get('/', async (request, response) => {
   {
     const blog = await Blog.find({}).populate('user', {username:1,name:1});
     if ( blog )
-      return response.status(202).json(blog.map(a => a.format))
+      return response.status(200).json(blog.map(a => a.format))
     else
       response.status(404).json( {'error':'blog not found'} );
   }
