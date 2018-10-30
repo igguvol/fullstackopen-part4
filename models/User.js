@@ -5,7 +5,7 @@ class UserClass
 {
   get format()
   {
-    return {'username':this.username,'name':this.name,'adult':this.adult,'blogs:':this.blogs,'id':this._id}
+    return {'username':this.username,'name':this.name,'adult':this.adult,'blogs':this.blogs,'id':this._id}
   }
 }
 
