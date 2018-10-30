@@ -111,5 +111,26 @@ UserRouter.get('/:id', async (request, response) => {
   }
 })
 
+UserRouter.get('/', async (request, response) => {
+  console.log('UserRouter.get ');
+  try
+  {
+    const user = await User.find({}).populate('blogs', {likes:1,author:1,title:1,url:1})
+    console.log('userRouter.get all: ', user);
+    if ( user )
+    {
+      var users = [];
+      user.forEach( (a) => users.push(a.format) );
+      response.json( users )
+    }
+    else
+      response.status(404).end();
+  }
+  catch (e)
+  {
+    response.status(400).json( {'error':e} );
+  }
+})
+
 
 module.exports = UserRouter;
