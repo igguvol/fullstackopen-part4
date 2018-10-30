@@ -19,7 +19,7 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.statics.format = (user) =>
 {
-  return {'username':user.username,'name':user.name,'adult':user.adult,'blogs:':user.blogs,'id':user._id}
+  return {'username':user.username,'name':user.name,'adult':user.adult,'blogs':user.blogs,'id':user._id}
 }
 
 
