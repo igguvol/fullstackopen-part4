@@ -74,7 +74,7 @@ BlogRouter.put('/:id', async (request, response) => {
     const savedBlog = await blog.save();
     response.status(200).json( savedBlog.format );
   }
-  catch ( exception )
+  catch ( e )
   {
     response.status(400).json( {'error':e} );
   }
