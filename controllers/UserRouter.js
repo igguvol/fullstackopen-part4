@@ -120,7 +120,10 @@ UserRouter.get('/', async (request, response) => {
     if ( user )
     {
       var users = [];
-      user.forEach( (a) => users.push(a.format) );
+      user.forEach( (a) => {
+        users.push(a.format) 
+        console.log('form',a.format) 
+      });
       response.json( users )
     }
     else

@@ -8,7 +8,7 @@ class BlogClass
 {
   get format()
   {
-    return {'title':this.title,'author':this.author,'url':this.url,'likes':this.likes,'user':this.user,'id':this._id}
+    return {'title':this.title,'author':this.author,'url':this.url,'likes':this.likes,'user':this.user,'comments':this.comments,'id':this._id}
   }
 }
 
@@ -17,14 +17,15 @@ const BlogSchema = new mongoose.Schema({
   author: { type: String, default: '' },
   url: String,
   likes: { type: Number, default: 0 },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  comments: [ String ]
 })
 
 BlogSchema.loadClass(BlogClass)
 
 BlogSchema.statics.format = (a) =>
 {
-  return {'title':a.title,'author':a.author,'url':a.url,'likes':a.likes,'user':a.user,'id':a._id}
+  return {'title':a.title,'author':a.author,'url':a.url,'likes':a.likes,'user':a.user,'comments':this.comments,'id':a._id}
 }
 
 const Blog = mongoose.model('Blog', BlogSchema)

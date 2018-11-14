@@ -55,6 +55,32 @@ BlogRouter.post('/', async (request, response) => {
   
 })
 
+
+BlogRouter.post('/:id/comments', async (request, response) => {
+  console.log('BlogRouter.post comment ', request.token );
+  try
+  {
+    if ( !request.token || !request.token.id )
+      return response.status(401).json( {'error':'missing or invalid access token'} ); 
+    var blog = await Blog.findById( request.params.id )
+    if ( !blog )
+      return response.status(400).json({"error":"invalid id"});
+
+    if ( !blog.comments )
+      blog.comments = [request.body.comment];
+    else
+      blog.comments = blog.comments.concat(request.body.comment);
+    const savedBlog = await blog.save();
+
+    return response.status(201).json( savedBlog.format );
+  }
+  catch (e) {
+    return response.status(400).json( {'error':e} );
+  }
+  
+})
+
+
 // update entry
 BlogRouter.put('/:id', async (request, response) => {
   console.log('BlogRouter.post update');
