@@ -124,7 +124,7 @@ test('create, comment and delete blog entry', async () => {
     .set('Authorization', `bearer ${token}` )
     .expect(200)
 
-  })
+})
 
 
 
