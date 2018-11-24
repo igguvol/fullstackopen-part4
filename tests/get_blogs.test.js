@@ -103,6 +103,31 @@ test('create user with no name', async () => {
     .expect('Content-Type', /application\/json/);
 })
 
+test('create, comment and delete blog entry', async () => {
+  const testEntry = {'title':'test','author':'test','url':'none'};
+  const response = await api.post('/api/blogs')
+    .send(testEntry)
+    .set('Authorization', `bearer ${token}` )
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const id = response['body']['id'];
+
+  const comment = {comment:'comment'};
+  const stuff = await api.post(`/api/blogs/${id}/comments`)
+    .send(comment)
+    .set('Authorization', `bearer ${token}` )
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  await api.delete(`/api/blogs/${id}`)
+    .set('Authorization', `bearer ${token}` )
+    .expect(200)
+
+  })
+
+
+
 
 afterAll(() => {
   server.close()
